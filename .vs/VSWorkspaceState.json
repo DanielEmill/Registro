@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
+    "\\Pages",
     "\\Shared"
   ],
-  "SelectedNode": "\\Shared\\SurveyPrompt.razor",
+  "SelectedNode": "\\Shared\\NavMenu.razor",
   "PreviewInSolutionExplorer": false
 }
