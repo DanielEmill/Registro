@@ -1,0 +1,122 @@
+@page "/persona"
+@page "/persona/{PersonaId:int}"
+
+@inject PersonasBLL personaBLL
+@inject OcupacionesBLL ocupacionBLL
+
+<EditForm Model="@persona">
+    <div class="card">
+		<div class="card-header">
+		    <h2>Registro</h2>
+		</div>
+
+        <div class="card-body">
+            <!--Persona ID-->
+            <div class="form-row">
+				<div class="col-3">
+					<label class="text-left">PersonasID</label>
+					<InputNumber @bind-Value="persona.PersonaId" class="form-control" placeholder="Ingrese su ID"/>
+                    <button type="button" @onclick="Buscar" class="btn btn-primary"> <i class="oi oi-zoom-in"></i>Buscar</button>
+				</div>
+            </div>
+            <!--Persona Nombre-->
+            <div class="form-row">
+				<label class="text-left">Nombre</label>
+				<InputText @bind-Value="persona.Nombres" class="form-control" placeholder="Ingrese su Nombre"/>
+            </div>
+            <!--Persona Direccion-->
+            <div class="form-row">
+				<label class="text-left">Dirección</label>
+				<InputText @bind-Value="persona.Direccion" class="form-control" placeholder="Ingrese su Dirección"/>
+            </div>
+            <!--Persona Email-->
+            <div class="form-row">
+				<label class="text-left">Email</label>
+				<InputText @bind-Value="persona.Email" class="form-control" placeholder="Ingrese su Email"/>
+            </div>
+            <div class="form-row">
+				<label class="text-left">Fecha de nacimiento</label>
+				<InputDate @bind-Value="persona.FechaNacimiento" class="form-control" placeholder="Ingrese su Fecha de nacimiento"/>
+            </div>
+            <div class="form-row">
+				<label class="text-left">Telefono</label>
+				<InputText @bind-Value="persona.Telefono" class="form-control" placeholder="Ingrese su Telefono"/>
+            </div>
+            <div class="form-row">
+				<label class="text-left">Celular</label>
+				<InputText @bind-Value="persona.Celular" class="form-control" placeholder="Ingrese su Celular"/>
+            </div>
+
+<!--
+			<div class="form-row">
+				<label class="text-left">Ocupacion ID</label>
+				<InputNumber @bind-Value="persona.OcupacionId" class="form-control" placeholder="Ingrese su Ocupacion ID"/>
+            </div>
+-->
+            <!--Persona Ocupacion-->
+            <div class="col-md-3 position-relative">
+                <label class="form-label">Ocupacion ID</label>
+                <InputSelect class="form-select" @bind-Value="persona.OcupacionId">
+
+                @foreach (var ocupacionesExistentes in ocupacionBLL.GetList())
+                {
+                    <option value="@ocupacionesExistentes.OcupacionID">@ocupacionesExistentes.Descripcion</option>
+                }
+               <!-- <option>1</option>
+                <option>2</option>-->
+                </InputSelect>
+            </div>
+
+        <!--Botones-->
+        <div class="card-footer">
+            <div class="btn-group" role="group" aria-label="Basic example">
+				<button type="button" class="btn btn-primary" @onclick="Nuevo" ><i class="oi oi-file"></i> Nuevo</button>
+				<button type="button" class="btn btn-success" @onclick="Guardar"><i class="oi oi-book"></i> Guardar</button>
+				<button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash"></i>Eliminar</button>
+			</div>
+        </div>
+    </div>
+</div>
+
+</EditForm>
+@code{
+    [Parameter]
+    public int PersonaID{get; set;}
+    public Personas persona {get; set;} = new Personas();
+
+    protected override void OnInitialized()
+    {
+        if(PersonaID > 0){
+            this.persona.PersonaId = PersonaID;
+            this.Buscar();
+        }
+    }
+    void Buscar(){
+        var personaEncontrada = personaBLL.Buscar(persona.PersonaId);
+
+        if(personaEncontrada != null){
+            this.persona  = personaEncontrada;
+        }
+    }
+    void Nuevo(){
+        this.persona = new Personas();
+    }
+    bool validar(){
+        if(!String.IsNullOrEmpty(persona.Nombres) || !String.IsNullOrEmpty(persona.Telefono) || !String.IsNullOrEmpty(persona.Celular) || !String.IsNullOrEmpty(persona.Email) || !String.IsNullOrEmpty(persona.Direccion)){
+            return true;
+        }
+        return false;
+    }
+    void Guardar(){
+        if(!validar()){
+            return;
+        }
+        if(personaBLL.Guardar(this.persona))
+            this.Nuevo();
+    }
+    void Eliminar(){
+        if(personaBLL.Eliminar(persona)){
+            Nuevo();
+        }
+    }
+}

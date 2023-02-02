@@ -5,10 +5,11 @@
 
 <EditForm Model="@ocupacion">
 	<div class="card">
-		<div class="card-body">
+		<div class="card-header">
 		    <h2>Registro</h2>
 		</div>
 		<div class="card-body">
+            <!--Ocupacion ID-->
 			<div class="form-row">
 				<div class="col-3">
 					<label class="text-left">OcupacionID</label>
@@ -17,6 +18,7 @@
                     <button type="button" @onclick="Buscar" class="btn btn-primary"> <i class="oi oi-zoom-in"></i>Buscar</button>
 				</div> 
 			</div>
+            <!--Ocupacion Descripción-->
 			 <div class="form-row">
 				<div class="col-7">
 					<label class="text-left">Descripción</label>
@@ -24,12 +26,14 @@
 				</div>
 			</div>
 			<div class="form-row">
+            <!--Ocupacion Salario-->
 				<div class="col-7">
 					<label class="text-left">Salario</label>
 					<InputNumber @bind-Value="ocupacion.salario" class="form-control" placeholder="Ingrese el salario"/>
 				</div>
 			</div>
 		</div>
+            <!--Ocupacion Botones-->
 		<div class="card-footer">
 			<div class="btn-group" role="group" aria-label="Basic example">
 				<button type="button" class="btn btn-primary" @onclick="Nuevo" ><i class="oi oi-file"></i> Nuevo</button>

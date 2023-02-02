@@ -1,0 +1,114 @@
+@page "/prestamos"
+@inject PrestamosBLL prestamosBLL
+@inject PersonasBLL personaBLL
+
+<EditForm Model="@prestamos">
+	<div class="card">
+		<div class="card-header">
+		    <h2>Registro</h2>
+		</div>
+		<div class="card-body">
+            <!--Prestamos ID-->
+			<div class="form-row">
+				<div class="col-3">
+					<label class="text-left">PrestamoId</label>
+					<InputNumber @bind-Value="prestamos.PrestamoId" class="form-control" placeholder="Ingrese su ID"/>
+                    <br>
+                    <button type="button" @onclick="Buscar" class="btn btn-primary"> <i class="oi oi-zoom-in"></i>Buscar</button>
+				</div> 
+			</div>
+            <!--Prestamos persona ID-->
+			 <div class="col-md-3 position-relative">
+                <label class="form-label">Persona ID</label>
+				<InputSelect class="form-select" @bind-Value="prestamos.PersonaId">
+				@foreach (var personaExistente in personaBLL.GetList())
+				{
+					<option value="@personaExistente.PersonaId">@personaExistente.Nombres</option>
+				}
+				</InputSelect>
+			</div>
+            <!--Prestamos Concepto-->
+			<div class="form-row">
+				<div class="col-7">
+					<label class="text-left">Concepto</label>
+					<InputText @bind-Value="prestamos.Concepto" class="form-control" placeholder="Ingrese el concepto"/>
+				</div>
+			</div>
+            <!--Prestamos Monto-->          
+			<div class="form-row">
+				<div class="col-7">
+					<label class="text-left">Monto</label>
+					<InputNumber @bind-Value="prestamos.Monto" class="form-control" placeholder="Ingrese el Monto"/>
+				</div>
+			</div>
+            <!--Prestamos Balance-->          
+			<div class="form-row">
+				<div class="col-7">
+					<label class="text-left">Balance</label>
+					<InputNumber @bind-Value="prestamos.Balance" class="form-control" placeholder="Ingrese el Balance"/>
+				</div>
+			</div>
+            <!--Prestamos FechaInit-->          
+			<div class="form-row">
+				<div class="col-7">
+					<label class="text-left">Fecha Inicio</label>
+					<InputDate @bind-Value="prestamos.FechaInicio" class="form-control" placeholder="Ingrese la fecha de inicio"/>
+				</div>
+			</div>
+            <!--Prestamos FechaVence-->          
+			<div class="form-row">
+				<div class="col-7">
+					<label class="text-left">Fecha Vence</label>
+					<InputDate @bind-Value="prestamos.FechaVence" class="form-control" placeholder="Ingrese la fecha de Vence"/>
+				</div>
+			</div>
+		</div>
+            <!--Ocupacion Botones-->
+
+		<div class="card-footer">
+			<div class="btn-group" role="group" aria-label="Basic example">
+				<button type="button" class="btn btn-primary"  @onclick="Nuevo" ><i class="oi oi-file"></i> Nuevo</button>
+				<button type="button" class="btn btn-success" @onclick="Guardar"><i class="oi oi-book"></i> Guardar</button>
+				<button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash"></i>Eliminar</button>
+			</div>
+		</div> 
+	</div>
+</EditForm>
+@code{ 
+	public int PrestamoIdd{get; set;}
+    public Prestamos prestamos {get; set;} = new Prestamos();
+    protected override void OnInitialized()
+    {
+        if(PrestamoIdd > 0){
+            this.prestamos.PrestamoId = PrestamoIdd;
+            this.Buscar();
+        }
+    }
+    void Buscar(){
+        var prestamosencontrado = prestamosBLL.Buscar(prestamos.PrestamoId);
+        if(prestamosencontrado != null){
+            this.prestamos  = prestamosencontrado;
+        }
+    }
+    void Nuevo(){
+        this.prestamos = new Prestamos();
+    }
+    bool validar(){
+        if(!String.IsNullOrEmpty(prestamos.Concepto)){
+            return true;
+        }
+        return false;
+    }
+    void Guardar(){
+        if(!validar()){
+            return;
+        }
+        if(prestamosBLL.Guardar(this.prestamos))
+            this.Nuevo();
+    }
+    void Eliminar(){
+        if(prestamosBLL.Eliminar(prestamos)){
+            Nuevo();
+        }
+    }
+}

@@ -1,0 +1,34 @@
+@page "/ConsultaPrestamos"
+@inject PrestamosBLL prestamosBLL
+@inject PersonasBLL personaBLL
+
+<PageTitle>Consultas</PageTitle>
+<h1>Consultas De prestamos registrado</h1> 
+    <table class="table table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Prestamos ID</th>
+      <th scope="col">Persona ID</th>
+      <th scope="col">Concepto</th>
+      <th scope="col">Monto</th>
+      <th scope="col">Balance</th>
+      <th scope="col">FechaInicio</th>
+      <th scope="col">FechaVence</th>
+    </tr>
+    </thead>
+
+    <tbody>
+        @foreach(var prestamos in prestamosBLL.GetList())
+        {
+            <tr>
+                <td>@prestamos.PrestamoId</td>
+                <td>@prestamos.PersonaId</td>
+                <td>@prestamos.Concepto</td>
+                <td>@prestamos.Monto</td>
+                <td>@prestamos.Balance</td>
+                <td>@prestamos.FechaInicio</td>
+                <td>@prestamos.FechaVence</td>
+            </tr>
+        }
+    </tbody>
+</table>

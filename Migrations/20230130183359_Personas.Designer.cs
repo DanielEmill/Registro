@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Registro.Migrations
 {
     [DbContext(typeof(Contexto))]
-    partial class ContextoModelSnapshot : ModelSnapshot
+    [Migration("20230130183359_Personas")]
+    partial class Personas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
@@ -41,19 +44,15 @@ namespace Registro.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Celular")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Direccion")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("FechaNacimiento")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Nombres")
@@ -64,44 +63,11 @@ namespace Registro.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Telefono")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("PersonaId");
 
                     b.ToTable("Personas");
-                });
-
-            modelBuilder.Entity("Prestamos", b =>
-                {
-                    b.Property<int>("PrestamoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double>("Balance")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("Concepto")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("FechaInicio")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("FechaVence")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Monto")
-                        .HasColumnType("REAL");
-
-                    b.Property<int>("PersonaId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("PrestamoId");
-
-                    b.ToTable("Prestamos");
                 });
 #pragma warning restore 612, 618
         }

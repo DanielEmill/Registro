@@ -14,6 +14,9 @@ builder.Services.AddDbContext<Contexto>(options =>options.UseSqlite(ConStr));
 //</>
 //Inyectar las BLL para poderla usar en cualquier momento:
 builder.Services.AddScoped<OcupacionesBLL>();
+builder.Services.AddScoped<PersonasBLL>();
+builder.Services.AddScoped<PrestamosBLL>();
+
 //</>
 var app = builder.Build();
 // Configure the HTTP request pipeline.
