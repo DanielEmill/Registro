@@ -12,7 +12,7 @@ public class Prestamos
     [Required(ErrorMessage = "El campo Balance es requerida")]
     public double Balance {get; set;}
     [Required(ErrorMessage = "El campo FechaInicio es requerida")]
-    public DateTime? FechaInicio { get; set; }
+    public DateTime? FechaInicio { get; set; } = DateTime.Now;
     [Required(ErrorMessage = "El campo FechaVence es requerida")]
     public DateTime? FechaVence { get; set; }
 }

@@ -14,11 +14,12 @@
       <th scope="col">Direccion</th>
       <th scope="col">FechaNacimiento</th>
       <th scope="col">OcupacionId</th>
+      <th scope="col">Balance</th>
     </tr>
     </thead>
 
     <tbody>
-        @foreach(var persona in personaBLL.GetList())
+        @foreach(var persona in personaBLL.GetList(o => true))
         {
             <tr>
                 <td>@persona.PersonaId</td>
@@ -29,7 +30,9 @@
                 <td>@persona.Direccion</td>
                 <td>@persona.FechaNacimiento</td>
                 <td>@persona.OcupacionId</td>
+                <td>@persona.Balance</td>
             </tr>
         }
     </tbody>
 </table>
+

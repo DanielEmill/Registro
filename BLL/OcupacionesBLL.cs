@@ -31,8 +31,8 @@ public class OcupacionesBLL{
     public Ocupaciones? Buscar(int ocupacionId){
         return _contexto.Ocupaciones.Where(o => o.OcupacionID == ocupacionId).AsNoTracking().SingleOrDefault();
     }
-    public List<Ocupaciones> GetList(){
-        return _contexto.Ocupaciones.ToList();
+    public List<Ocupaciones> GetList(Expression<Func<Ocupaciones, bool>> criterio){
+        return _contexto.Ocupaciones.AsNoTracking().Where(criterio).ToList();
     }
     
 }

@@ -18,4 +18,6 @@ public class Personas
     public DateTime? FechaNacimiento { get; set; }
     [Required(ErrorMessage = "El Campo OcupacionId es requerida")]
     public int OcupacionId { get; set; }
+    public double Balance {get; set;}
+
 }

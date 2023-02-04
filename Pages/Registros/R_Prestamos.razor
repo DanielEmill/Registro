@@ -21,7 +21,7 @@
 			 <div class="col-md-3 position-relative">
                 <label class="form-label">Persona ID</label>
 				<InputSelect class="form-select" @bind-Value="prestamos.PersonaId">
-				@foreach (var personaExistente in personaBLL.GetList())
+				@foreach (var personaExistente in personaBLL.GetList(o => true))
 				{
 					<option value="@personaExistente.PersonaId">@personaExistente.Nombres</option>
 				}
@@ -77,6 +77,7 @@
 @code{ 
 	public int PrestamoIdd{get; set;}
     public Prestamos prestamos {get; set;} = new Prestamos();
+
     protected override void OnInitialized()
     {
         if(PrestamoIdd > 0){
@@ -103,7 +104,7 @@
         if(!validar()){
             return;
         }
-        if(prestamosBLL.Guardar(this.prestamos))
+        if(prestamosBLL.Guardar(prestamos))
             this.Nuevo();
     }
     void Eliminar(){
@@ -111,4 +112,6 @@
             Nuevo();
         }
     }
+
+
 }

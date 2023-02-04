@@ -16,7 +16,7 @@
     </thead>
 
     <tbody>
-        @foreach(var ocupacion in ocupacionesBLL.GetList())
+        @foreach(var ocupacion in ocupacionesBLL.GetList(o => true))
         {
             <tr>
                 <td>@ocupacion.OcupacionID</td>

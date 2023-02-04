@@ -31,7 +31,7 @@ public class PersonasBLL
     public Personas? Buscar(int personaId){
         return _contexto.Personas.Where(o => o.PersonaId == personaId).AsNoTracking().SingleOrDefault();
     }
-    public List<Personas> GetList(){
-        return _contexto.Personas.ToList();
+    public List<Personas> GetList(Expression<Func<Personas, bool>> criterio){
+        return _contexto.Personas.AsNoTracking().Where(criterio).ToList();
     }
 }
