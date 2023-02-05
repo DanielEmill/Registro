@@ -1,72 +1,83 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Registro</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
-
+﻿
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        
+
         <div class="top-row ps-3 navbar navbar-dark">
             <div class="container-fluid">
-                <h2 class="navbar-brand">Registro Ocupacion</h2>
+                <a class="navbar-brand" href="ocupacion">Registro Ocupacion</a>
+                <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
             </div>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="ocupacion">
-                <span class="oi oi-plus" aria-hidden="true"></span> Registro
-            </NavLink>
-        </div>
-                <div class="nav-item px-3">
+        <div class="nav-item px-1">
             <NavLink class="nav-link" href="Consulta">
                 <span class="oi oi-document text outline" aria-hidden="true"></span> Consulta
             </NavLink>
         </div>
-    </nav>
+        <!------------------------------------------------------------------------------------>
         <div class="top-row ps-3 navbar navbar-dark">
             <div class="container-fluid">
-                <h2 class="navbar-brand">Registro Persona</h2>
+                <a class="navbar-brand" href="persona">Registro Persona</a>
+                <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
             </div>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="persona">
-                <span class="oi oi-person" aria-hidden="true"></span> Registro Persona
-            </NavLink>
-        </div>
 
-        
-        <div class="nav-item px-3">
+        <div class="nav-item px-1">
             <NavLink class="nav-link" href="ConsultaPersonas">
                 <span class="oi oi-document text outline" aria-hidden="true"></span> Consulta
             </NavLink>
         </div>
-
+        <!------------------------------------------------------------------------------------>
         <div class="top-row ps-3 navbar navbar-dark">
             <div class="container-fluid">
-                <h2 class="navbar-brand">Registro Prestamos</h2>
+                <a class="navbar-brand" href="prestamos">Registro Prestamos</a>
+                <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
             </div>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="prestamos">
-                <span class="oi oi-document text outline" aria-hidden="true"></span> Prestamos
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
+        <div class="nav-item px-1">
             <NavLink class="nav-link" href="ConsultaPrestamos">
                 <span class="oi oi-document text outline" aria-hidden="true"></span> Consulta
             </NavLink>
         </div>
-</div>
+        <!------------------------------------------------------------------------------------>
+        <div class="top-row ps-3 navbar navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="pago">Registro Pago</a>
+                <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </div>
+        <div class="nav-item px-1">
+            <NavLink class="nav-link" href="ConsultaPago">
+                <span class="oi oi-document text outline" aria-hidden="true"></span> Consulta
+            </NavLink>
+        </div>
+        <!------------------------------------------------------------------------------------>
+        <div class="top-row ps-3 navbar navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="pagoDetalle">Registro Detalle</a>
+                <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="nav-item px-1">
+            <NavLink class="nav-link" href="ConsultaPagoDetalle">
+                <span class="oi oi-document text outline" aria-hidden="true"></span> Consulta
+            </NavLink>
+        </div>
+
+    </nav>
+</div> 
 
 @code {
     private bool collapseNavMenu = true;

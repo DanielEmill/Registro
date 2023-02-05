@@ -1,0 +1,104 @@
+@page "/pago"
+@**@
+@inject PagosBll pagosBLL
+@inject PersonasBLL personaBLL
+
+<EditForm Model="@pago">
+	<div class="card">
+		<div class="card-header">
+		    <h2>Registro</h2>
+		</div>
+		<div class="card-body">
+            <!--Pagos PagoId-->
+			<div class="form-row">
+				<div class="col-3">
+					<label class="text-left">PagoID</label>
+					<InputNumber @bind-Value="pago.PagoId" class="form-control" placeholder="Ingrese su ID"/>
+                    <br>
+                    <button type="button" @onclick="Buscar" class="btn btn-primary"> <i class="oi oi-zoom-in"></i>Buscar</button>
+				</div> 
+			</div>
+            <!--Pagos Fecha-->
+			 <div class="form-row">
+				<div class="col-7">
+					<label class="text-left">Fecha del pago</label>
+					<InputDate @bind-Value="pago.Fecha" class="form-control" placeholder="Ingrese la fecha"/>
+				</div>
+			</div>
+            <!--Pagos PersonaId-->
+            <!---AQUI VA-->
+            <div class="col-md-3 position-relative">
+                <label class="form-label">Persona ID</label>
+				<InputSelect class="form-select" @bind-Value="pago.PersonaId">
+				@foreach (var personaExistente in personaBLL.GetList(o => true))
+				{
+					<option value="@personaExistente.PersonaId">@personaExistente.Nombres</option>
+				}
+				</InputSelect>
+			</div>
+            <!--Pagos Concepto-->
+			<div class="form-row">
+				<div class="col-7">
+					<label class="text-left">Concepto</label>
+					<InputText @bind-Value="pago.Concepto" class="form-control" placeholder="Ingrese el concepto"/>
+				</div>
+			</div>
+            <!--Prestamos Monto-->          
+			<div class="form-row">
+				<div class="col-7">
+					<label class="text-left">Monto</label>
+					<InputNumber @bind-Value="pago.Monto" class="form-control" placeholder="Ingrese el Monto"/>
+				</div>
+			</div>
+            <!--Pagos Botones-->
+		<div class="card-footer">
+			<div class="btn-group" role="group" aria-label="Basic example">
+				<button type="button" class="btn btn-primary" @onclick="Nuevo" ><i class="oi oi-file"></i> Nuevo</button>
+				<button type="button" class="btn btn-success" @onclick="Guardar"><i class="oi oi-book"></i> Guardar</button>
+				<button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash"></i>Eliminar</button>
+			</div>
+		</div>
+	</div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int PagoId{get; set;}
+    public Pagos pago {get; set;} = new Pagos();
+    protected override void OnInitialized()
+    {
+        if(PagoId > 0){
+            this.pago.PagoId = PagoId;
+            this.Buscar();
+        }
+    }
+    void Buscar(){
+        var pagoEncontrado = pagosBLL.Buscar(pago.PagoId);
+
+        if(pagoEncontrado != null){
+            this.pago  = pagoEncontrado;
+        }
+    }
+    void Nuevo(){
+        this.pago = new Pagos();
+    }
+    bool validar(){
+        if(!String.IsNullOrEmpty(pago.Concepto)){
+            return true;
+        }
+        return false;
+    }
+    void Guardar(){
+        if(!validar()){
+            return;
+        }
+        if(pagosBLL.Guardar(this.pago))
+            this.Nuevo();
+    }
+    void Eliminar(){
+        if(pagosBLL.Eliminar(pago)){
+            Nuevo();
+        }
+    }
+}

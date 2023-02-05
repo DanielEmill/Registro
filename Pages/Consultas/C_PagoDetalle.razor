@@ -1,0 +1,30 @@
+@page "/ConsultaPagoDetalle"
+@inject PagosDetalleBLL pagosDetalleBLL
+
+<PageTitle>Consultas</PageTitle>
+
+<h1>Consultas</h1>
+
+
+    <table class="table table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">PagoId</th>
+      <th scope="col">PrestamoId</th>
+      <th scope="col">ValorPagado</th>
+    </tr>
+    </thead>
+
+    <tbody>
+        @foreach(var pagosdetalle in pagosDetalleBLL.GetList(o => true))
+        {
+            <tr>
+                <td>@pagosdetalle.Id</td>
+                <td>@pagosdetalle.PagoId</td>
+                <td>@pagosdetalle.PrestamoId</td>
+                <td>@pagosdetalle.ValorPagado</td>
+            </tr>
+        }
+    </tbody>
+</table>

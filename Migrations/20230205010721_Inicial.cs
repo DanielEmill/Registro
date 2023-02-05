@@ -26,6 +26,37 @@ namespace Registro.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Pagos",
+                columns: table => new
+                {
+                    PagoId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    PersonaId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Concepto = table.Column<string>(type: "TEXT", nullable: false),
+                    Monto = table.Column<double>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pagos", x => x.PagoId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PagosDetalle",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PagoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrestamoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ValorPagado = table.Column<double>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PagosDetalle", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Personas",
                 columns: table => new
                 {
@@ -69,6 +100,12 @@ namespace Registro.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Ocupaciones");
+
+            migrationBuilder.DropTable(
+                name: "Pagos");
+
+            migrationBuilder.DropTable(
+                name: "PagosDetalle");
 
             migrationBuilder.DropTable(
                 name: "Personas");
