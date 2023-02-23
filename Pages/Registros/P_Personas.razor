@@ -1,15 +1,17 @@
 @page "/persona"
 @page "/persona/{PersonaId:int}"
-
+@inject NotificationService NotificationService
 @inject PersonasBLL personaBLL
 @inject OcupacionesBLL ocupacionBLL
 
-<EditForm Model="@persona">
+<EditForm Model="@persona" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
     <div class="card">
 		<div class="card-header">
-		    <h2>Registro</h2>
+		<h2>Registro de Personas</h2>
 		</div>
-
         <div class="card-body">
             <!--Persona ID-->
             <div class="form-row">
@@ -23,28 +25,34 @@
             <div class="form-row">
 				<label class="text-left">Nombre</label>
 				<InputText @bind-Value="persona.Nombres" class="form-control" placeholder="Ingrese su Nombre"/>
+                <ValidationMessage For="@(() => persona.Nombres)"/>
             </div>
             <!--Persona Direccion-->
             <div class="form-row">
 				<label class="text-left">Dirección</label>
 				<InputText @bind-Value="persona.Direccion" class="form-control" placeholder="Ingrese su Dirección"/>
+                <ValidationMessage For="@(() => persona.Direccion)"/>
             </div>
             <!--Persona Email-->
             <div class="form-row">
 				<label class="text-left">Email</label>
 				<InputText @bind-Value="persona.Email" class="form-control" placeholder="Ingrese su Email"/>
+                <ValidationMessage For="@(() => persona.Email)"/>
             </div>
             <div class="form-row">
 				<label class="text-left">Fecha de nacimiento</label>
 				<InputDate @bind-Value="persona.FechaNacimiento" class="form-control" placeholder="Ingrese su Fecha de nacimiento"/>
+                <ValidationMessage For="@(() => persona.FechaNacimiento)"/>
             </div>
             <div class="form-row">
 				<label class="text-left">Telefono</label>
 				<InputText @bind-Value="persona.Telefono" class="form-control" placeholder="Ingrese su Telefono"/>
+                <ValidationMessage For="@(() => persona.Telefono)"/>
             </div>
             <div class="form-row">
 				<label class="text-left">Celular</label>
 				<InputText @bind-Value="persona.Celular" class="form-control" placeholder="Ingrese su Celular"/>
+                <ValidationMessage For="@(() => persona.Celular)"/>
             </div>
 
 <!--
@@ -62,17 +70,18 @@
                 {
                     <option value="@ocupacionesExistentes.OcupacionID">@ocupacionesExistentes.Descripcion</option>
                 }
-               <!-- <option>1</option>
+            <!-- <option>1</option>
                 <option>2</option>-->
                 </InputSelect>
+                <ValidationMessage For="@(() => persona.OcupacionId)"/>
             </div>
 
         <!--Botones-->
         <div class="card-footer">
             <div class="btn-group" role="group" aria-label="Basic example">
-				<button type="button" class="btn btn-primary" @onclick="Nuevo" ><i class="oi oi-file"></i> Nuevo</button>
-				<button type="button" class="btn btn-success" @onclick="Guardar"><i class="oi oi-book"></i> Guardar</button>
-				<button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash"></i>Eliminar</button>
+                <button type="button" class="btn btn-primary" @onclick="Nuevo" ><i class="oi oi-file"></i> Nuevo</button>
+                <button type="submit" class="btn btn-success mr-2"><i class=" oi oi-cloud-download"></i> Guardar</button>
+                <button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash"></i>Eliminar</button>
 			</div>
         </div>
     </div>
@@ -93,9 +102,24 @@
     }
     void Buscar(){
         var personaEncontrada = personaBLL.Buscar(persona.PersonaId);
-
         if(personaEncontrada != null){
+            ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Se ha encontrado la busqueda con exito."
+            }
+        );
             this.persona  = personaEncontrada;
+        }
+    else{
+        ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Ingrese un valor valido."
+            }
+        );
         }
     }
     void Nuevo(){
@@ -111,12 +135,41 @@
         if(!validar()){
             return;
         }
-        if(personaBLL.Guardar(this.persona))
+        if(personaBLL.Guardar(this.persona)){
+            ShowNotification(
+                new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Se ha guardado con exito."
+                }
+            );
             this.Nuevo();
+        }
     }
     void Eliminar(){
         if(personaBLL.Eliminar(persona.PersonaId)){
-            Nuevo();
+        ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Info,
+                Summary = "Se ha eliminado con exito."
+            }
+        );
+        this.Nuevo();
         }
+        else{
+            ShowNotification(
+                new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "No hay elemento para borrar."
+                }
+            );
+            return ;
+        }
+    }
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
     }
 }

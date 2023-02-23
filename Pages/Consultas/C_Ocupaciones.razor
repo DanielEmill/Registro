@@ -1,28 +1,32 @@
-@page "/Consulta"
+@page "/ConsultaOcupacion"
 @inject OcupacionesBLL ocupacionesBLL
-
 <PageTitle>Consultas</PageTitle>
+<div class="card">
+    <div class="card-header">
+        <h2>Consultas de Ocupacion registrado</h2> 
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Salario</th>
+                </tr>
+            </thead>
 
-<h1>Consultas</h1>
+            <tbody>
+                @foreach(var ocupacion in ocupacionesBLL.GetList(o => true))
+                {
+                    <tr>
+                        <td>@ocupacion.OcupacionID</td>
+                        <td>@ocupacion.Descripcion</td>
+                        <td>@ocupacion.salario</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 
-    <table class="table table-hover">
-    <thead>
-    <tr>
-      <th scope="col">ID</th>
-      <th scope="col">Descripción</th>
-      <th scope="col">Salario</th>
-    </tr>
-    </thead>
-
-    <tbody>
-        @foreach(var ocupacion in ocupacionesBLL.GetList(o => true))
-        {
-            <tr>
-                <td>@ocupacion.OcupacionID</td>
-                <td>@ocupacion.Descripcion</td>
-                <td>@ocupacion.salario</td>
-            </tr>
-        }
-    </tbody>
-</table>

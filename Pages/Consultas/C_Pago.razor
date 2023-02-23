@@ -1,33 +1,38 @@
 @page "/ConsultaPago"
 @inject PagosBll pagosBll
-
 <PageTitle>Consultas</PageTitle>
+<div class="card">
+    <div class="card-header">
+        <h2>Consultas de pagos registrado</h2> 
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">PagoID</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">PersonaId</th>
+                    <th scope="col">Concepto</th>
+                    <th scope="col">Monto</th>
+                </tr>
+            </thead>
 
-<h1>Consultas</h1>
+            <tbody>
+                @foreach(var pagos in pagosBll.GetList(o => true))
+                {
+                    <tr>
+                        <td>@pagos.PagoId</td>
+                        <td>@pagos.Fecha</td>
+                        <td>@pagos.PersonaId</td>
+                        <td>@pagos.Concepto</td>
+                        <td>@pagos.Monto</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 
-    <table class="table table-hover">
-    <thead>
-    <tr>
-      <th scope="col">PagoID</th>
-      <th scope="col">Fecha</th>
-      <th scope="col">PersonaId</th>
-      <th scope="col">Concepto</th>
-      <th scope="col">Monto</th>
 
-    </tr>
-    </thead>
-
-    <tbody>
-        @foreach(var pagos in pagosBll.GetList(o => true))
-        {
-            <tr>
-                <td>@pagos.PagoId</td>
-                <td>@pagos.Fecha</td>
-                <td>@pagos.PersonaId</td>
-                <td>@pagos.Concepto</td>
-                <td>@pagos.Monto</td>
-            </tr>
-        }
-    </tbody>
-</table>
+    

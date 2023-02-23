@@ -1,12 +1,16 @@
 @page "/pago"
-@**@
+@page "/pago/{PagoId:int}"
 @inject PagosBll pagosBLL
 @inject PersonasBLL personaBLL
+@inject NotificationService NotificationService
 
-<EditForm Model="@pago">
+<EditForm Model="@pago" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
 	<div class="card">
 		<div class="card-header">
-		    <h2>Registro</h2>
+		    <h2>Registro de Pagos</h2>
 		</div>
 		<div class="card-body">
             <!--Pagos PagoId-->
@@ -23,6 +27,7 @@
 				<div class="col-7">
 					<label class="text-left">Fecha del pago</label>
 					<InputDate @bind-Value="pago.Fecha" class="form-control" placeholder="Ingrese la fecha"/>
+                    <ValidationMessage For="@(() => pago.Fecha)"/>
 				</div>
 			</div>
             <!--Pagos PersonaId-->
@@ -35,12 +40,14 @@
 					<option value="@personaExistente.PersonaId">@personaExistente.Nombres</option>
 				}
 				</InputSelect>
+                <ValidationMessage For="@(() => pago.PersonaId)"/>
 			</div>
             <!--Pagos Concepto-->
 			<div class="form-row">
 				<div class="col-7">
 					<label class="text-left">Concepto</label>
 					<InputText @bind-Value="pago.Concepto" class="form-control" placeholder="Ingrese el concepto"/>
+                    <ValidationMessage For="@(() => pago.Concepto)"/>
 				</div>
 			</div>
             <!--Prestamos Monto-->          
@@ -48,13 +55,14 @@
 				<div class="col-7">
 					<label class="text-left">Monto</label>
 					<InputNumber @bind-Value="pago.Monto" class="form-control" placeholder="Ingrese el Monto"/>
+                    <ValidationMessage For="@(() => pago.Monto)"/>
 				</div>
 			</div>
             <!--Pagos Botones-->
 		<div class="card-footer">
 			<div class="btn-group" role="group" aria-label="Basic example">
 				<button type="button" class="btn btn-primary" @onclick="Nuevo" ><i class="oi oi-file"></i> Nuevo</button>
-				<button type="button" class="btn btn-success" @onclick="Guardar"><i class="oi oi-book"></i> Guardar</button>
+                <button type="submit" class="btn btn-success mr-2"><i class=" oi oi-cloud-download"></i> Guardar</button>
 				<button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash"></i>Eliminar</button>
 			</div>
 		</div>
@@ -77,7 +85,23 @@
         var pagoEncontrado = pagosBLL.Buscar(pago.PagoId);
 
         if(pagoEncontrado != null){
+            ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Se ha encontrado la busqueda con exito."
+            }
+        );
             this.pago  = pagoEncontrado;
+        }
+        else{
+        ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Ingrese un valor valido."
+            }
+        );
         }
     }
     void Nuevo(){
@@ -94,11 +118,39 @@
             return;
         }
         if(pagosBLL.Guardar(this.pago))
+        ShowNotification(
+                new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Se ha guardado con exito."
+                }
+            );
             this.Nuevo();
     }
     void Eliminar(){
         if(pagosBLL.Eliminar(pago.PagoId)){
+        ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Info,
+                Summary = "Se ha eliminado con exito."
+            }
+        );
             Nuevo();
         }
+        else{
+            ShowNotification(
+                new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "No hay elemento para borrar."
+                }
+            );
+            return ;
+        }
+    }
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
     }
 }
