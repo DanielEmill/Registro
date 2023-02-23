@@ -16,8 +16,13 @@ public class PrestamosBLL
         return _contexto.SaveChanges() > 0;
     }
     public bool Modificar(Prestamos prestamos){
-        _contexto.Entry(prestamos).State = EntityState.Modified;
-        return _contexto.SaveChanges() > 0;
+        var PrestamoEncontrado = _contexto.Prestamos.Find(prestamos.PrestamoId);
+        
+        if(PrestamoEncontrado != null){
+            _contexto.Entry(PrestamoEncontrado).CurrentValues.SetValues(prestamos);
+            return _contexto.SaveChanges() > 0;
+        }
+        return false;
     }
     public bool Guardar(Prestamos prestamos){
         if(!Existe(prestamos.PrestamoId)){
@@ -27,10 +32,13 @@ public class PrestamosBLL
             return this.Modificar(prestamos);
         }
     }
-    public bool Eliminar(Prestamos prestamos){
-        EliminarBalance(prestamos);
-        _contexto.Entry(prestamos).State = EntityState.Deleted;
-        return _contexto.SaveChanges() > 0;
+    public bool Eliminar(int prestamos){
+    var prestamosAEliminar = _contexto.Prestamos.Where(o=> o.PrestamoId == prestamos).SingleOrDefault();
+        if(prestamosAEliminar!=null){
+            _contexto.Entry(prestamosAEliminar).State = EntityState.Deleted;
+            return _contexto.SaveChanges() > 0;
+        }
+        return false;
     }
     public Prestamos? Buscar(int prestamoId){
         return _contexto.Prestamos.Where(o => o.PrestamoId == prestamoId).AsNoTracking().SingleOrDefault();

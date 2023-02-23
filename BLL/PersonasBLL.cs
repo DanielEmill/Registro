@@ -15,8 +15,13 @@ public class PersonasBLL
         return _contexto.SaveChanges() > 0;
     }
     public bool Modificar(Personas persona){
-        _contexto.Entry(persona).State = EntityState.Modified;
-        return _contexto.SaveChanges() > 0;
+        var PersonaEncontrada = _contexto.Personas.Find(persona.PersonaId);
+        
+        if(PersonaEncontrada != null){
+            _contexto.Entry(PersonaEncontrada).CurrentValues.SetValues(persona);
+            return _contexto.SaveChanges() > 0;
+        }
+        return false;
     }
     public bool Guardar(Personas persona){
         if(!Existe(persona.PersonaId))
@@ -24,9 +29,13 @@ public class PersonasBLL
         else
             return this.Modificar(persona);
     }
-    public bool Eliminar(Personas persona){
-        _contexto.Entry(persona).State = EntityState.Deleted;
-        return _contexto.SaveChanges() > 0;
+    public bool Eliminar(int persona){
+    var PersonaAEliminar = _contexto.Personas.Where(o=> o.PersonaId == persona).SingleOrDefault();
+        if(PersonaAEliminar!=null){
+            _contexto.Entry(PersonaAEliminar).State = EntityState.Deleted;
+            return _contexto.SaveChanges() > 0;
+        }
+        return false;
     }
     public Personas? Buscar(int personaId){
         return _contexto.Personas.Where(o => o.PersonaId == personaId).AsNoTracking().SingleOrDefault();

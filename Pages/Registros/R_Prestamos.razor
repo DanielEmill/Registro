@@ -108,7 +108,7 @@
             this.Nuevo();
     }
     void Eliminar(){
-        if(prestamosBLL.Eliminar(prestamos)){
+        if(prestamosBLL.Eliminar(prestamos.PrestamoId)){
             Nuevo();
         }
     }

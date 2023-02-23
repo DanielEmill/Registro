@@ -14,9 +14,13 @@ public class OcupacionesBLL{
         _contexto.Ocupaciones.Add(ocupacion);
         return _contexto.SaveChanges() > 0;
     }
-    public bool Modificar(Ocupaciones ocupacion){
-        _contexto.Entry(ocupacion).State = EntityState.Modified;
-        return _contexto.SaveChanges() > 0;
+    private bool Modificar(Ocupaciones ocupacion){
+        var OcupacionExistente = _contexto.Ocupaciones.Find(ocupacion.OcupacionID);
+        if(OcupacionExistente != null){
+            _contexto.Entry(OcupacionExistente).CurrentValues.SetValues(ocupacion);
+            return _contexto.SaveChanges() > 0;
+        }
+        return false;
     }
     public bool Guardar(Ocupaciones ocupacion){
         if(!Existe(ocupacion.OcupacionID))
@@ -24,9 +28,14 @@ public class OcupacionesBLL{
         else
             return this.Modificar(ocupacion);
     }
-    public bool Eliminar(Ocupaciones ocupacion){
-        _contexto.Entry(ocupacion).State = EntityState.Deleted;
-        return _contexto.SaveChanges() > 0;
+    public bool Eliminar(int ocupacion){
+        var OcupacionAEliminar = _contexto.Ocupaciones.Where(o=> o.OcupacionID == ocupacion).SingleOrDefault();
+
+        if(OcupacionAEliminar!=null){
+            _contexto.Entry(OcupacionAEliminar).State = EntityState.Deleted;
+            return _contexto.SaveChanges() > 0;
+        }
+        return false;
     }
     public Ocupaciones? Buscar(int ocupacionId){
         return _contexto.Ocupaciones.Where(o => o.OcupacionID == ocupacionId).AsNoTracking().SingleOrDefault();
