@@ -18,6 +18,8 @@ public class Personas
     public DateTime? FechaNacimiento { get; set; }
     [Required(ErrorMessage = "El Campo OcupacionId es requerida")]
     public int OcupacionId { get; set; }
+
+    [Range(1, float.MaxValue, ErrorMessage = "El balance debe estar en el rango valido {1} - {2}")]
     public double Balance {get; set;}
 
 }

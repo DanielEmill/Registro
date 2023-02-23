@@ -17,7 +17,6 @@ builder.Services.AddScoped<OcupacionesBLL>();
 builder.Services.AddScoped<PersonasBLL>();
 builder.Services.AddScoped<PrestamosBLL>();
 builder.Services.AddScoped<PagosBll>();
-builder.Services.AddScoped<PagosDetalleBLL>();
 
 //</>
 var app = builder.Build();
