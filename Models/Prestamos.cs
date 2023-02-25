@@ -5,7 +5,7 @@ public class Prestamos
 {
     [Key]
     public int PrestamoId { get; set; }
-    [Required(ErrorMessage = "El campo PersonaId es requerida")]
+    [Range(1, int.MaxValue, ErrorMessage = "Debes elegir una persona.")]
     public int PersonaId { get; set;}
     [Required(ErrorMessage = "El campo Concepto es requerida")]
     public string? Concepto {get; set;}

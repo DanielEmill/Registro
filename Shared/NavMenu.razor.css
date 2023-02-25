@@ -3,23 +3,23 @@
 }
 
 .top-row {
-    height: 3.5rem;
+    height: 3.0rem;
     background-color: rgba(0,0,0,0.4);
 }
 
 .navbar-brand {
-    font-size: 1.1rem;
+    font-size: 1.0rem;
 }
 
 .oi {
-    width: 2rem;
+    width: 1.5rem;
     font-size: 1.1rem;
     vertical-align: text-top;
     top: -2px;
 }
 
 .nav-item {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     padding-bottom: 0.5rem;
 }
 

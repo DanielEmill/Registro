@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Registro.Data;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 
@@ -9,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+
 //Inyectacion del contexto.
 var ConStr = builder.Configuration.GetConnectionString("ConStr");
 builder.Services.AddDbContext<Contexto>(options =>options.UseSqlite(ConStr));
@@ -18,7 +17,7 @@ builder.Services.AddDbContext<Contexto>(options =>options.UseSqlite(ConStr));
 builder.Services.AddScoped<OcupacionesBLL>();
 builder.Services.AddScoped<PersonasBLL>();
 builder.Services.AddScoped<PrestamosBLL>();
-builder.Services.AddScoped<PagosBll>();
+builder.Services.AddScoped<PagosBLL>();
 
 //Radzen
 builder.Services.AddScoped<DialogService>();

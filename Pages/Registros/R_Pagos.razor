@@ -1,89 +1,160 @@
 @page "/pago"
 @page "/pago/{PagoId:int}"
-@inject PagosBll pagosBLL
 @inject PersonasBLL personaBLL
+@inject PrestamosBLL prestamosBLL
+@inject PagosBLL pagosBLL
 @inject NotificationService NotificationService
 
-<EditForm Model="@pago" OnValidSubmit="Guardar">
+<EditForm Model="pago" OnInvalidSubmit="Guardar">
+
     <DataAnnotationsValidator/>
     <ValidationSummary/>
+<div class="card">
+	<div class="card-header">
+		<h2>Registro de Pagos</h2>
+	</div>
 
-	<div class="card">
-		<div class="card-header">
-		    <h2>Registro de Pagos</h2>
-		</div>
-		<div class="card-body">
-            <!--Pagos PagoId-->
-			<div class="form-row">
+    <!--Pagos PagoId-->
+	<div class="card-body">
+        <div class="row">
 				<div class="col-3">
 					<label class="text-left">PagoID</label>
-					<InputNumber @bind-Value="pago.PagoId" class="form-control" placeholder="Ingrese su ID"/>
-                    <br>
+                    <InputNumber class="form-control" @bind-Value="pago.PagoId" />
                     <button type="button" @onclick="Buscar" class="btn btn-primary"> <i class="oi oi-zoom-in"></i>Buscar</button>
 				</div> 
-			</div>
+        </div>
+        <div class="row">
+            <!--Pagos PersonaId-->
+                <div class="col-3">
+                    <label class="form-label">Persona ID</label>
+                    <InputSelect class="form-select" @bind-Value="pago.PersonaId">
+                        @foreach (var persona in personaBLL.GetList(o => true) )
+                        {
+                            <option value="@persona.PersonaId">@persona.Nombres</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => pago.PersonaId)"/>
+                </div>
+
             <!--Pagos Fecha-->
-			 <div class="form-row">
-				<div class="col-7">
-					<label class="text-left">Fecha del pago</label>
+				<div class="col-3">
+					<label class="form-label">Fecha del pago</label>
 					<InputDate @bind-Value="pago.Fecha" class="form-control" placeholder="Ingrese la fecha"/>
                     <ValidationMessage For="@(() => pago.Fecha)"/>
 				</div>
-			</div>
-            <!--Pagos PersonaId-->
-            <!---AQUI VA-->
-            <div class="col-md-3 position-relative">
-                <label class="form-label">Persona ID</label>
-				<InputSelect class="form-select" @bind-Value="pago.PersonaId">
-				@foreach (var personaExistente in personaBLL.GetList(o => true))
-				{
-					<option value="@personaExistente.PersonaId">@personaExistente.Nombres</option>
-				}
-				</InputSelect>
-                <ValidationMessage For="@(() => pago.PersonaId)"/>
-			</div>
-            <!--Pagos Concepto-->
-			<div class="form-row">
-				<div class="col-7">
-					<label class="text-left">Concepto</label>
-					<InputText @bind-Value="pago.Concepto" class="form-control" placeholder="Ingrese el concepto"/>
-                    <ValidationMessage For="@(() => pago.Concepto)"/>
-				</div>
-			</div>
-            <!--Prestamos Monto-->          
-			<div class="form-row">
-				<div class="col-7">
-					<label class="text-left">Monto</label>
-					<InputNumber @bind-Value="pago.Monto" class="form-control" placeholder="Ingrese el Monto"/>
-                    <ValidationMessage For="@(() => pago.Monto)"/>
-				</div>
-			</div>
-            <!--Pagos Botones-->
+        </div>
+
+        <!--Pagos Concepto-->
+        <div class="row">
+            <div class="col-3">
+                <label class="text-left">Concepto</label>
+                <InputText @bind-Value="pago.Concepto" class="form-control" placeholder="Ingrese el concepto"/>
+                <ValidationMessage For="@(() => pago.Concepto)"/>
+            </div>
+
+        <!--Prestamos Monto-->          
+            <div class="col-3">
+                <label class="text-left">Monto</label>
+                <InputNumber @bind-Value="pago.Monto" class="form-control" placeholder="Monto" disabled="@(DeshabilitarCampo)"/>
+            </div>
+        </div>
+
+            <h5>Pago Detalle:</h5>
+            <div class="row">
+                <!--PrestamosID-->
+                <div class="col-2">
+                    <label>PrestamoId:</label>
+                        <InputSelect class="form-select" @bind-Value="Detalle.PrestamoId">
+
+                             @if (prestamosBLL.GetList(o => o.PersonaId == pago.PersonaId).Count == 1)
+                            {
+                                var prestamo = prestamosBLL.GetList(o => o.PersonaId == pago.PersonaId).FirstOrDefault();
+                                if(prestamo!=null)
+                                    Detalle.PrestamoId = prestamo.PrestamoId;
+                            }
+                            @foreach (var prestamo in prestamosBLL.GetList(o => o.PersonaId==pago.PersonaId) )
+                            {
+                                <option value="@prestamo.PrestamoId">@prestamo.Concepto</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => Detalle.PrestamoId)" class="form-control" />
+                </div>
+                <div class="col-2">
+                    <label>ValorPagado</label>
+                    <InputNumber  @bind-Value="Detalle.ValorPagado" class="form-control" />
+                    <ValidationMessage For="@(() => Detalle.ValorPagado)" />
+                </div>
+                <div class="col-4 d-flex align-items-end">
+                    <button type="button" class="btn btn-success" @onclick="AgregarDetalle">
+                        <i class="oi oi-plus"></i>
+                    </button>
+                </div>
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>PrestamoID</th>
+                            <th>PagoID</th>
+                            <th>Valor Pagado</th>
+                        </tr>
+                    </thead>
+                        <tbody>
+                                @foreach (var detalle in pago.PagosDetalle)
+                                {
+                                    <tr>
+                                        <td>@detalle.Id</td>
+                                        <td>@detalle.PrestamoId</td>
+                                        <td>@detalle.PagoId</td>
+                                        <td>@detalle.ValorPagado</td>
+                                        <td> <button name="Btn" id="Btn" class="btn btn-danger mr-2"
+                                        onclick=@(() => EliminarDetalle(detalle.Id))> 
+                                        <i class="oi oi-trash"></i>
+                                        </button>
+                                        </td>
+                                    </tr>
+                                }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>Total:</td>
+                                <td>@pago.Monto</td>
+                            </tr>
+                        </tfoot>
+                </table>
+            </div>
+    </div>
+
+<!--Pagos Botones-->
 		<div class="card-footer">
 			<div class="btn-group" role="group" aria-label="Basic example">
 				<button type="button" class="btn btn-primary" @onclick="Nuevo" ><i class="oi oi-file"></i> Nuevo</button>
-                <button type="submit" class="btn btn-success mr-2"><i class=" oi oi-cloud-download"></i> Guardar</button>
+                <button type="sumi" @onclick="Guardar" class="btn btn-success mr-2"><i class=" oi oi-cloud-download"></i> Guardar</button>
 				<button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash"></i>Eliminar</button>
 			</div>
 		</div>
-	</div>
-    </div>
-</EditForm>
+</div>
 
-@code {
+</EditForm>
+@code { 
     [Parameter]
     public int PagoId{get; set;}
     public Pagos pago {get; set;} = new Pagos();
+    public bool DeshabilitarCampo {get{return true;}}
+
+    public PagosDetalle Detalle = new PagosDetalle();
+////
+
     protected override void OnInitialized()
     {
         if(PagoId > 0){
-            this.pago.PagoId = PagoId;
-            this.Buscar();
+            pago.PagoId = PagoId;
+            Buscar();
         }
     }
+
     void Buscar(){
         var pagoEncontrado = pagosBLL.Buscar(pago.PagoId);
-
         if(pagoEncontrado != null){
             ShowNotification(
             new NotificationMessage
@@ -113,6 +184,7 @@
         }
         return false;
     }
+
     void Guardar(){
         if(!validar()){
             return;
@@ -128,7 +200,7 @@
             this.Nuevo();
     }
     void Eliminar(){
-        if(pagosBLL.Eliminar(pago.PagoId)){
+        if(pagosBLL.Eliminar(pago)){
         ShowNotification(
             new NotificationMessage
             {
@@ -149,8 +221,43 @@
             return ;
         }
     }
+    void AgregarDetalle()
+    {
+        if (Detalle.ValorPagado > 0 && Detalle?.PrestamoId != null)
+        {
+        ShowNotification(
+            new NotificationMessage
+            {
+                Severity = NotificationSeverity.Info,
+                Summary = "Se ha añadido con exito."
+            }
+        );
+            this.pago.PagosDetalle.Add(this.Detalle);
+            this.Detalle = new PagosDetalle();
+            pago.Monto = pago.PagosDetalle.Sum(d => d.ValorPagado);
+
+        }
+        else{
+        ShowNotification(
+            new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Info,
+                    Summary = "ERROR, Favor revisar los campos"
+                }
+            );
+            return;
+        }
+    }
+    void EliminarDetalle(int detalleIdSeleccionado)
+    {
+        if(pago.PagosDetalle!=null && detalleIdSeleccionado>0 ){
+            pago.PagosDetalle.RemoveAll(d => d.Id == detalleIdSeleccionado );
+            pago.Monto = pago.PagosDetalle.Sum(d => d.ValorPagado);
+        }
+    }
     void ShowNotification(NotificationMessage message)
     {
         NotificationService.Notify(message);
     }
+
 }

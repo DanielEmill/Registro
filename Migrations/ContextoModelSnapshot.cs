@@ -75,6 +75,8 @@ namespace Registro.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PagoId");
+
                     b.ToTable("PagosDetalle");
                 });
 
@@ -149,6 +151,20 @@ namespace Registro.Migrations
                     b.HasKey("PrestamoId");
 
                     b.ToTable("Prestamos");
+                });
+
+            modelBuilder.Entity("PagosDetalle", b =>
+                {
+                    b.HasOne("Pagos", null)
+                        .WithMany("PagosDetalle")
+                        .HasForeignKey("PagoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Pagos", b =>
+                {
+                    b.Navigation("PagosDetalle");
                 });
 #pragma warning restore 612, 618
         }

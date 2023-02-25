@@ -17,6 +17,8 @@ public class Personas
     [Required(ErrorMessage = "El Campo FechaNacimiento es requerida")]
     public DateTime? FechaNacimiento { get; set; }
     [Required(ErrorMessage = "El Campo OcupacionId es requerida")]
+
+    [Range(1, int.MaxValue, ErrorMessage = "Debes elegir una Ocupacion.")]
     public int OcupacionId { get; set; }
     public double Balance {get; set;}
 

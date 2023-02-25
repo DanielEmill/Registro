@@ -65,7 +65,6 @@
             <div class="col-md-3 position-relative">
                 <label class="form-label">Ocupacion ID</label>
                 <InputSelect class="form-select" @bind-Value="persona.OcupacionId">
-
                 @foreach (var ocupacionesExistentes in ocupacionBLL.GetList(o => true))
                 {
                     <option value="@ocupacionesExistentes.OcupacionID">@ocupacionesExistentes.Descripcion</option>

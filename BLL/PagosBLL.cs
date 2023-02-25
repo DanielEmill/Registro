@@ -1,46 +1,60 @@
-using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-public class PagosBll
-{
-    private Contexto _contexto;
-    public PagosBll(Contexto contexto){
-        _contexto = contexto;
+
+public class PagosBLL{
+    private Contexto _Contexto;
+
+    public PagosBLL(Contexto contexto) {
+        _Contexto = contexto;
     }
-    public bool Existe(int pagoId){
-        return _contexto.Pagos.Any(o => o.PagoId == pagoId);
+
+    public bool Existe(int PagosId) {
+        return _Contexto.Pagos.Any(o => o.PagoId == PagosId);
     }
-    public bool Inserta(Pagos pagoId){
-        _contexto.Pagos.Add(pagoId);
-        return _contexto.SaveChanges() > 0;
+
+    private bool Insertar(Pagos Pago) {
+
+        _Contexto.Pagos.Add(Pago);
+
+        return _Contexto.SaveChanges() > 0;
+
     }
-    public bool Modificar(Pagos pago){
-        var PagoEncontrado = _contexto.Pagos.Find(pago.PagoId);
-        
-        if(PagoEncontrado != null){
-            _contexto.Entry(PagoEncontrado).CurrentValues.SetValues(pago);
-            return _contexto.SaveChanges() > 0;
-        }
-        return false;
+
+    private bool Modificar(Pagos Pago) {
+
+        _Contexto.Entry(Pago).State = EntityState.Modified;
+
+        return _Contexto.SaveChanges() > 0;
+
     }
-    public bool Guardar(Pagos pagoId){
-        if(!Existe(pagoId.PagoId))
-            return this.Inserta(pagoId);
-        else
-            return this.Modificar(pagoId);
+
+    public bool Guardar(Pagos Pago) {
+    if (!Existe(Pago.PagoId)) {
+        return this.Insertar(Pago);
+    } else {
+        return this.Modificar(Pago);
     }
-    public bool Eliminar(int pago){
-    var pagoAEliminar = _contexto.Pagos.Where(o=> o.PagoId == pago).SingleOrDefault();
-        if(pagoAEliminar!=null){
-            _contexto.Entry(pagoAEliminar).State = EntityState.Deleted;
-            return _contexto.SaveChanges() > 0;
-        }
-        return false;
     }
-    public Pagos? Buscar(int pagoId){
-        return _contexto.Pagos.Where(o => o.PagoId == pagoId).AsNoTracking().SingleOrDefault();
+
+    public bool Eliminar(Pagos Pago) {
+        _Contexto.Entry(Pago).State = EntityState.Deleted;
+
+        return _Contexto.SaveChanges() > 0;
     }
-    public List<Pagos> GetList(Expression<Func<Pagos, bool>> criterio){
-        return _contexto.Pagos.AsNoTracking().Where(criterio).ToList();
+
+    public Pagos ? Buscar(int PagosId) {
+
+        return _Contexto.Pagos
+            .Include(o => o.PagosDetalle)
+            .Where(o => o.PagoId == PagosId)
+            .AsTracking()
+            .SingleOrDefault();
+
     }
+
+    public List < Pagos > GetList(Expression < Func < Pagos, bool >> criterio) {
+
+        return _Contexto.Pagos.AsNoTracking().Where(criterio).ToList();
+    }
+
 }

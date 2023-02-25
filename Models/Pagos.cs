@@ -15,18 +15,8 @@ public class Pagos
 
     [Range(1, double.MaxValue, ErrorMessage = "El Monto debe estar en el rango valido {1} - {2}")]
     public double Monto { get; set;}
-    
+
     [ForeignKey("PagoId")]
     public virtual List<PagosDetalle> PagosDetalle {get;set;} = new List<PagosDetalle> ();
 }
-
-public class PagosDetalle
-{
-    [Key]
-    public int Id { get; set; }
-    public int PagoId { get; set;}
-    public int PrestamoId { get; set;}
-    public double ValorPagado { get; set;}
-}
-
 
