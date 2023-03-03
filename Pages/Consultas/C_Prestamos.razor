@@ -1,10 +1,36 @@
 @page "/ConsultaPrestamos"
 @inject PrestamosBLL prestamosBLL
-@inject PersonasBLL personaBLL
+@inject NotificationService NotificationService
 <PageTitle>Consultas</PageTitle>
 <div class="card">
     <div class="card-header">
         <h2>Consulta de prestamos registrado</h2> 
+                <form>
+                <div class="input-group d-flex align-items-end">
+            <div class="flex-fill mx-2"> 
+                    <label>Filtro </label>  
+                    <select class="form-control col-2" @bind="Filtro">
+                        <option value="0">Todo</option>
+                        <option value="1">Prestamos ID</option>
+                        <option value="2">Persona ID</option>
+                        <option value="3">Concepto</option>
+                        <option value="4">Monto</option>
+                        <option value="5">Balance</option>
+                        <option value="6">Fecha Inicio</option>
+                        <option value="7">Fecha Vence</option>
+                    </select>
+            </div>
+                    <div class="flex-fill mx-2">
+                        <label>Criterio</label>
+                        <input type="text" class="form-control" @bind="Criterio" disabled="@(!HabilitarCriterio)"/>
+                    </div>
+
+                    <button type="button" class="btn btn-success mr-2" @onclick="Buscar">
+                        <i class="oi oi-magnifying-glass mr-2"/> Buscar
+                    </button>
+    
+                </div>
+            </form>
     </div>
     <div class="card-body">
         <table class="table table-hover">
@@ -20,7 +46,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach(var prestamos in prestamosBLL.GetList(o => true))
+                @foreach(var prestamos in filtroPrestamo)
                 {
                     <tr>
                         <td>@prestamos.PrestamoId</td>
@@ -36,3 +62,142 @@
         </table>
     </div>
 </div>
+
+
+@code{
+    public bool HabilitarCriterio {get{return Filtro != "0";}}
+    public string? Filtro { get; set; }
+    public string? Criterio { get; set; }
+    public List<Prestamos> filtroPrestamo { get; set; } = new List<Prestamos>();
+    protected override async Task OnInitializedAsync()
+    {
+        filtroPrestamo = prestamosBLL.GetList(o => true);
+    }
+    private void Buscar()
+    {
+    double valorNumerico, balanceDigitado;
+    bool esNumerico = double.TryParse(Criterio, out valorNumerico);
+    bool esNumericoBalance = double.TryParse(Criterio, out balanceDigitado);
+        switch (Filtro)
+        {
+            case "0":
+                filtroPrestamo = prestamosBLL.GetList(o => true);
+                break;                
+            case "1":
+                int id;
+                if (!int.TryParse(Criterio, out id))
+                {
+                    ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Debe colocar un valor entero."
+                    });
+                    return;
+                }
+                filtroPrestamo = prestamosBLL.GetList(o => o.PrestamoId == id);
+                break;
+            case "2":
+                int IdPersona;
+                if (!int.TryParse(Criterio, out IdPersona))
+                {
+                    ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Debe colocar un valor entero."
+                    });
+                    return;
+                }
+                filtroPrestamo = prestamosBLL.GetList(o => o.PersonaId == IdPersona);
+                break;
+            case "3":
+            if (string.IsNullOrEmpty(Criterio))
+            {
+                ShowNotification(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Debe escribir un Concepto para buscar."
+                });
+                return;
+            }
+                filtroPrestamo = prestamosBLL.GetList(o => o.Concepto.Contains(Criterio));
+                break;
+            case "4":
+            esNumerico = double.TryParse(Criterio, out valorNumerico);
+            if (!esNumerico)
+            {
+                ShowNotification(
+                    new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Debe colocar un valor numérico para la búsqueda por Monto."
+                    }
+                );
+                return;
+            }
+                filtroPrestamo = prestamosBLL.GetList(o => o.Monto == valorNumerico);
+                break;
+            case "5":
+            esNumericoBalance = double.TryParse(Criterio, out balanceDigitado);
+            if (!esNumerico)
+            {
+                ShowNotification(
+                    new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Debe colocar un valor numérico para la búsqueda por Balance."
+                    }
+                );
+                return;
+            }
+                filtroPrestamo = prestamosBLL.GetList(o => o.Balance == balanceDigitado);
+                break;
+            case "6":
+                if (DateTime.TryParse(Criterio, out DateTime fecha))
+                {
+                    filtroPrestamo = prestamosBLL.GetList(o => o.FechaInicio == fecha.Date);
+                }
+                else
+                {
+                    ShowNotification(
+                        new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Debe colocar una fecha válida en formato dd/MM/yyyy."
+                        }
+                    );
+                }
+                    break;
+            case "7":
+                if (DateTime.TryParse(Criterio, out DateTime fechaV))
+                {
+                    filtroPrestamo = prestamosBLL.GetList(o => o.FechaVence == fechaV.Date);
+                }
+                else
+                {
+                    ShowNotification(
+                        new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Debe colocar una fecha válida en formato dd/MM/yyyy."
+                        }
+                    );
+                }
+                    break;
+            default:
+                filtroPrestamo = prestamosBLL.GetList(o => true);
+                break;
+        }
+        if (!filtroPrestamo.Any())
+        {
+            ShowNotification(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Warning,
+                Summary = "No se encontraron resultados."
+            });
+        }
+    }
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+}

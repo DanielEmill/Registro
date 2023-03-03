@@ -1,9 +1,33 @@
 @page "/ConsultaOcupacion"
 @inject OcupacionesBLL ocupacionesBLL
+@inject NotificationService NotificationService
+
 <PageTitle>Consultas</PageTitle>
 <div class="card">
     <div class="card-header">
         <h2>Consultas de Ocupacion registrado</h2> 
+        <form>
+                <div class="input-group d-flex align-items-end">
+            <div class="flex-fill mx-2"> 
+                    <label>Filtro </label>  
+                    <select class="form-control col-2" @bind="Filtro">
+                        <option value="0">Todo</option>
+                        <option value="1">ID</option>
+                        <option value="2">Descripción</option>
+                        <option value="3">Salario</option>   
+                    </select>
+            </div>
+                    <div class="flex-fill mx-2">
+                        <label>Criterio</label>
+                        <input type="text" class="form-control" @bind="Criterio" disabled="@(!HabilitarCriterio)"/>
+                    </div>
+
+                    <button type="button" class="btn btn-success mr-2" @onclick="Buscar">
+                        <i class="oi oi-magnifying-glass mr-2"/> Buscar
+                    </button>
+    
+                </div>
+            </form>
     </div>
     <div class="card-body">
         <table class="table table-hover">
@@ -16,7 +40,7 @@
             </thead>
 
             <tbody>
-                @foreach(var ocupacion in ocupacionesBLL.GetList(o => true))
+                @foreach(var ocupacion in filtroOcupaciones)
                 {
                     <tr>
                         <td>@ocupacion.OcupacionID</td>
@@ -29,4 +53,81 @@
     </div>
 </div>
 
+@code {
+    public bool HabilitarCriterio {get{return Filtro != "0";}}
+    public string? Filtro { get; set; }
+    public string? Criterio { get; set; }
+    public List<Ocupaciones> filtroOcupaciones { get; set; } = new List<Ocupaciones>();
+    protected override async Task OnInitializedAsync()
+    {
+        filtroOcupaciones = ocupacionesBLL.GetList(o => true);
+    }
+    private void Buscar()
+    {
+    double valorNumerico;
+    bool esNumerico = double.TryParse(Criterio, out valorNumerico);
+
+        switch (Filtro)
+        {
+            case "0":
+                filtroOcupaciones = ocupacionesBLL.GetList(o => true);
+                break;                
+            case "1":
+                int id;
+                if (!int.TryParse(Criterio, out id))
+                {
+                    ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Debe colocar un valor entero."
+                    });
+                    return;
+                }
+                filtroOcupaciones = ocupacionesBLL.GetList(o => o.OcupacionID == id);
+                break;
+            case "2":
+            if (string.IsNullOrEmpty(Criterio))
+            {
+                ShowNotification(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Debe escribir una descripcion para buscar."
+                });
+                return;
+            }
+                filtroOcupaciones = ocupacionesBLL.GetList(o => o.Descripcion.Contains(Criterio));
+                break;
+            case "3":
+            esNumerico = double.TryParse(Criterio, out valorNumerico);
+            if (!esNumerico)
+            {
+                ShowNotification(
+                    new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Debe colocar un valor numérico para la búsqueda por salario."
+                    }
+                );
+                return;
+            }
+                filtroOcupaciones = ocupacionesBLL.GetList(o => o.salario == valorNumerico);
+                break;
+            default:
+                filtroOcupaciones = ocupacionesBLL.GetList(o => true);
+                break;
+        }
+        if (!filtroOcupaciones.Any())
+        {
+            ShowNotification(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Warning,
+                Summary = "No se encontraron resultados."
+            });
+        }
+    }
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+}
 

@@ -1,10 +1,39 @@
 @page "/ConsultaPersonas"
+@inject NotificationService NotificationService
 @inject PersonasBLL personaBLL
 
 <PageTitle>Consultas</PageTitle>
 <div class="card">
     <div class="card-header">
-        <h2>Consultas de personas registrado</h2> 
+        <h2>Consultas de personas registrado</h2>
+            <form>
+                <div class="input-group d-flex align-items-end">
+                <div class="flex-fill mx-2"> 
+                    <label>Filtro </label>            
+                    <select class="form-control col-2" @bind="Filtro">
+                        <option value="0">Todos</option>
+                        <option value="1">PersonaId</option>
+                        <option value="2">Nombres</option>
+                        <option value="3">Telefono</option>
+                        <option value="4">Celular</option>
+                        <option value="5">Email</option>
+                        <option value="6">Direccion</option>
+                        <option value="7">FechaNacimiento</option>
+                        <option value="8">OcupacionId</option>
+                        <option value="9">Balance</option>
+                    </select>
+                </div>
+                    <div class="flex-fill mx-2">
+                        <label>Criterio</label>
+                        <input type="text" class="form-control" @bind="Criterio" disabled="@(!HabilitarCriterio)"/>
+                    </div>
+
+                    <button type="button" class="btn btn-success mr-2" @onclick="Buscar">
+                        <i class="oi oi-magnifying-glass mr-2"/> Buscar
+                    </button>
+    
+                </div>
+            </form>
     </div>
     <div class="card-body">
         <table class="table table-hover">
@@ -23,7 +52,7 @@
             </thead>
 
             <tbody>
-                @foreach(var persona in personaBLL.GetList(o => true))
+                @foreach(var persona in filtroPersona)
                 {
                     <tr>
                         <td>@persona.PersonaId</td>
@@ -42,5 +71,160 @@
     </div>
 </div>
 
+@code{
+    public bool HabilitarCriterio {get{return Filtro != "0";}}
+    public string? Filtro { get; set; }
+    public string? Criterio { get; set; }
+    public List<Personas> filtroPersona { get; set; } = new List<Personas>();
+    protected override async Task OnInitializedAsync()
+    {
+        filtroPersona = personaBLL.GetList(o => true);
+    }
+    private void Buscar()
+    {
+    double valorNumerico, balanceDigitado;
+    bool esNumerico = double.TryParse(Criterio, out valorNumerico);
+    bool esNumericoBalance = double.TryParse(Criterio, out balanceDigitado);
 
+
+        switch (Filtro)
+        {
+            case "0":
+                filtroPersona = personaBLL.GetList(o => true);
+                break;                
+            case "1":
+                int id;
+                if (!int.TryParse(Criterio, out id))
+                {
+                    ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Debe colocar un valor entero."
+                    });
+                    return;
+                }
+                filtroPersona = personaBLL.GetList(o => o.PersonaId == id);
+                break;
+            case "2":
+            if (string.IsNullOrEmpty(Criterio))
+            {
+                ShowNotification(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Debe escribir un nombre para buscar."
+                });
+                return;
+            }
+                filtroPersona = personaBLL.GetList(o => o.Nombres.Contains(Criterio));
+                break;
+            case "3":
+            if (string.IsNullOrEmpty(Criterio))
+            {
+                ShowNotification(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Debe escribir un telefono para buscar."
+                });
+                return;
+            }
+                filtroPersona = personaBLL.GetList(o => o.Telefono.Contains(Criterio));
+                break;
+            case "4":
+            if (string.IsNullOrEmpty(Criterio))
+            {
+                ShowNotification(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Debe escribir un celular para buscar."
+                });
+                return;
+            }
+                filtroPersona = personaBLL.GetList(o => o.Celular.Contains(Criterio));
+                break;
+            case "5":
+            if (string.IsNullOrEmpty(Criterio))
+            {
+                ShowNotification(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Debe escribir un email para buscar."
+                });
+                return;
+            }
+                filtroPersona = personaBLL.GetList(o => o.Email.Contains(Criterio));
+                break;
+            case "6":
+            if (string.IsNullOrEmpty(Criterio))
+            {
+                ShowNotification(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Debe escribir una direccion para buscar."
+                });
+                return;
+            }
+                filtroPersona = personaBLL.GetList(o => o.Direccion.Contains(Criterio));
+                break;
+            case "7":
+                if (DateTime.TryParse(Criterio, out DateTime fecha))
+                {
+                    filtroPersona = personaBLL.GetList(o => o.FechaNacimiento == fecha.Date);
+                }
+                else
+                {
+                    ShowNotification(
+                        new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Debe colocar una fecha válida en formato dd/MM/yyyy."
+                        }
+                    );
+                }
+                    break;
+            case "8":
+                int IdOcupacion;
+                if (!int.TryParse(Criterio, out IdOcupacion))
+                {
+                    ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Debe colocar un valor entero."
+                    });
+                    return;
+                }
+                filtroPersona = personaBLL.GetList(o => o.OcupacionId == IdOcupacion);
+                break;
+            case "9":
+            esNumericoBalance = double.TryParse(Criterio, out balanceDigitado);
+            if (!esNumerico)
+            {
+                ShowNotification(
+                    new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Debe colocar un valor numérico para la búsqueda por Balance."
+                    }
+                );
+                return;
+            }
+                filtroPersona = personaBLL.GetList(o => o.Balance == balanceDigitado);
+                break;
+            default:
+                filtroPersona = personaBLL.GetList(o => true);
+                break;
+        }
+        if (!filtroPersona.Any())
+        {
+            ShowNotification(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Warning,
+                Summary = "No se encontraron resultados."
+            });
+        }
+    }
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+}
 
