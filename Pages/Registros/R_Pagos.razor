@@ -65,8 +65,7 @@
                 <div class="col-2">
                     <label>PrestamoId:</label>
                         <InputSelect class="form-select" @bind-Value="Detalle.PrestamoId">
-
-                             @if (prestamosBLL.GetList(o => o.PersonaId == pago.PersonaId).Count == 1)
+                            @if (prestamosBLL.GetList(o => o.PersonaId == pago.PersonaId).Count == 1)
                             {
                                 var prestamo = prestamosBLL.GetList(o => o.PersonaId == pago.PersonaId).FirstOrDefault();
                                 if(prestamo!=null)
@@ -143,6 +142,8 @@
     public bool DeshabilitarCampo {get{return true;}}
 
     public PagosDetalle Detalle = new PagosDetalle();
+    public Prestamos prestamo = new Prestamos();
+
 ////
 
     protected override void OnInitialized()

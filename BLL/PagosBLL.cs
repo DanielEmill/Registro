@@ -12,18 +12,14 @@ public class PagosBLL{
         return _Contexto.Pagos.Any(o => o.PagoId == PagosId);
     }
 
-    private bool Insertar(Pagos Pago) {
-
-        _Contexto.Pagos.Add(Pago);
-
+    private bool Insertar(Pagos pago) {
+        InsertarDetalle(pago);
+        _Contexto.Pagos.Add(pago);
         return _Contexto.SaveChanges() > 0;
-
     }
 
     private bool Modificar(Pagos Pago) {
-
         _Contexto.Entry(Pago).State = EntityState.Modified;
-
         return _Contexto.SaveChanges() > 0;
 
     }
@@ -36,14 +32,13 @@ public class PagosBLL{
     }
     }
 
-    public bool Eliminar(Pagos Pago) {
-        _Contexto.Entry(Pago).State = EntityState.Deleted;
-
+    public bool Eliminar(Pagos pago) {
+        EliminarDetalle(pago);
+        _Contexto.Entry(pago).State = EntityState.Deleted;
         return _Contexto.SaveChanges() > 0;
     }
 
     public Pagos ? Buscar(int PagosId) {
-
         return _Contexto.Pagos
             .Include(o => o.PagosDetalle)
             .Where(o => o.PagoId == PagosId)
@@ -53,8 +48,49 @@ public class PagosBLL{
     }
 
     public List < Pagos > GetList(Expression < Func < Pagos, bool >> criterio) {
-
         return _Contexto.Pagos.AsNoTracking().Where(criterio).ToList();
     }
 
+    void InsertarDetalle(Pagos pago)
+    {
+        if (pago.PagosDetalle == null)
+        {
+            pago.PagosDetalle = new List<PagosDetalle>(); 
+        }
+        foreach (var item in pago.PagosDetalle)
+        {
+            var prestamo =  _Contexto.Prestamos.Find(item.PrestamoId);
+            if (prestamo != null)
+            {
+                prestamo.Balance -= item.ValorPagado;
+                _Contexto.Entry(prestamo).State = EntityState.Modified;
+                _Contexto.SaveChanges();
+            }
+        }
+        var persona =  _Contexto.Personas.Find(pago.PersonaId);
+        if(persona!=null){
+            persona.Balance -= pago.Monto;
+            _Contexto.Entry(persona).State = EntityState.Modified;
+            _Contexto.SaveChanges();
+        }
+    }
+    void EliminarDetalle(Pagos pago)
+    {
+        var persona =  _Contexto.Personas.Find(pago.PersonaId);
+        if(persona!=null){
+            persona.Balance += pago.Monto;
+            _Contexto.Entry(persona).State = EntityState.Modified;
+            _Contexto.SaveChanges();
+        }
+        foreach (var item in pago.PagosDetalle)
+        {
+            var prestamo =  _Contexto.Prestamos.Find(item.PrestamoId);
+            if (prestamo != null)
+            {
+                prestamo.Balance += item.ValorPagado;
+            }
+        }
+        _Contexto.Entry(pago).State = EntityState.Modified;
+        _Contexto.SaveChanges();
+    }
 }

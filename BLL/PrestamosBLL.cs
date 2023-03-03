@@ -56,12 +56,5 @@ public class PrestamosBLL
             _contexto.SaveChanges();
         }
     }
-    void EliminarBalance(Prestamos prestamoss)
-    {
-        var persona =  _contexto.Personas.Find(prestamoss.PersonaId);
-        if(persona!=null){
-            persona.Balance -= prestamoss.Monto;
-            _contexto.Entry(persona).State = EntityState.Modified;
-        }
-    } 
+
 }
