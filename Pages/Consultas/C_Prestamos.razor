@@ -119,7 +119,7 @@
                 });
                 return;
             }
-                filtroPrestamo = prestamosBLL.GetList(o => o.Concepto.Contains(Criterio));
+                filtroPrestamo = prestamosBLL.GetList(o => o.Concepto!.Contains(Criterio));
                 break;
             case "4":
             esNumerico = double.TryParse(Criterio, out valorNumerico);

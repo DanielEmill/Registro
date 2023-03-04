@@ -95,7 +95,7 @@
                 });
                 return;
             }
-                filtroOcupaciones = ocupacionesBLL.GetList(o => o.Descripcion.Contains(Criterio));
+                filtroOcupaciones = ocupacionesBLL.GetList(o => o.Descripcion!.Contains(Criterio));
                 break;
             case "3":
             esNumerico = double.TryParse(Criterio, out valorNumerico);

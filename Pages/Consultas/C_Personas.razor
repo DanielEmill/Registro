@@ -115,7 +115,7 @@
                 });
                 return;
             }
-                filtroPersona = personaBLL.GetList(o => o.Nombres.Contains(Criterio));
+                filtroPersona = personaBLL.GetList(o => o.Nombres!.Contains(Criterio));
                 break;
             case "3":
             if (string.IsNullOrEmpty(Criterio))
@@ -127,7 +127,7 @@
                 });
                 return;
             }
-                filtroPersona = personaBLL.GetList(o => o.Telefono.Contains(Criterio));
+                filtroPersona = personaBLL.GetList(o => o.Telefono!.Contains(Criterio));
                 break;
             case "4":
             if (string.IsNullOrEmpty(Criterio))
@@ -139,7 +139,7 @@
                 });
                 return;
             }
-                filtroPersona = personaBLL.GetList(o => o.Celular.Contains(Criterio));
+                filtroPersona = personaBLL.GetList(o => o.Celular!.Contains(Criterio));
                 break;
             case "5":
             if (string.IsNullOrEmpty(Criterio))
@@ -151,7 +151,7 @@
                 });
                 return;
             }
-                filtroPersona = personaBLL.GetList(o => o.Email.Contains(Criterio));
+                filtroPersona = personaBLL.GetList(o => o.Email!.Contains(Criterio));
                 break;
             case "6":
             if (string.IsNullOrEmpty(Criterio))
@@ -163,7 +163,7 @@
                 });
                 return;
             }
-                filtroPersona = personaBLL.GetList(o => o.Direccion.Contains(Criterio));
+                filtroPersona = personaBLL.GetList(o => o.Direccion!.Contains(Criterio));
                 break;
             case "7":
                 if (DateTime.TryParse(Criterio, out DateTime fecha))

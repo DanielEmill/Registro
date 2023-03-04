@@ -19,9 +19,9 @@ public class PagosBLL{
     }
 
     private bool Modificar(Pagos Pago) {
+        ModificarDetalle(Pago);
         _Contexto.Entry(Pago).State = EntityState.Modified;
         return _Contexto.SaveChanges() > 0;
-
     }
 
     public bool Guardar(Pagos Pago) {
@@ -44,7 +44,6 @@ public class PagosBLL{
             .Where(o => o.PagoId == PagosId)
             .AsTracking()
             .SingleOrDefault();
-
     }
 
     public List < Pagos > GetList(Expression < Func < Pagos, bool >> criterio) {
@@ -93,4 +92,44 @@ public class PagosBLL{
         _Contexto.Entry(pago).State = EntityState.Modified;
         _Contexto.SaveChanges();
     }
+void ModificarDetalle(Pagos pagoActual)
+{
+    var detallesOriginales = _Contexto.PagosDetalle.AsNoTracking().Where(d => d.PagoId == pagoActual.PagoId).ToList();
+    foreach (var detalle in pagoActual.PagosDetalle)
+    {
+        if (detallesOriginales.Any(d => d.Id == detalle.Id))
+        {
+            var detalleOriginal = detallesOriginales.FirstOrDefault(d => d.Id == detalle.Id);
+            var persona = _Contexto.Personas.Find(pagoActual.PersonaId);
+            var prestamo = _Contexto.Prestamos.Find(detalle.PrestamoId);
+            if (prestamo != null)
+            {
+                prestamo.Balance += detalleOriginal!.ValorPagado - detalle.ValorPagado;
+                _Contexto.Entry(prestamo).State = EntityState.Modified;
+                _Contexto.SaveChanges();
+
+                persona!.Balance = prestamo.Balance;
+                _Contexto.Entry(persona).State = EntityState.Modified;
+                _Contexto.SaveChanges();
+            }
+        }
+        else
+        {
+            var prestamo = _Contexto.Prestamos.Find(detalle.PrestamoId);
+            var persona = _Contexto.Personas.Find(pagoActual.PersonaId);
+            if (prestamo != null)
+            {
+                prestamo.Balance -= detalle.ValorPagado;
+                _Contexto.Entry(prestamo).State = EntityState.Modified;
+                _Contexto.SaveChanges();
+                persona!.Balance = prestamo.Balance;
+                _Contexto.Entry(persona).State = EntityState.Modified;
+                _Contexto.SaveChanges();
+            }
+        }
+
+    }
+}
+
+
 }

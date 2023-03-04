@@ -130,7 +130,7 @@
                 });
                 return;
             }
-                FiltroPagos = pagosBll.GetList(o => o.Concepto.Contains(Criterio));
+                FiltroPagos = pagosBll.GetList(o => o.Concepto!.Contains(Criterio));
                 break;
             case "5":
             esNumerico = double.TryParse(Criterio, out valorNumerico);
@@ -165,6 +165,3 @@
         NotificationService.Notify(message);
     }
 }
-
-
-    

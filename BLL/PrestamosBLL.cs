@@ -33,8 +33,10 @@ public class PrestamosBLL
         }
     }
     public bool Eliminar(int prestamos){
+
     var prestamosAEliminar = _contexto.Prestamos.Where(o=> o.PrestamoId == prestamos).SingleOrDefault();
         if(prestamosAEliminar!=null){
+            EliminarBalance(prestamosAEliminar);
             _contexto.Entry(prestamosAEliminar).State = EntityState.Deleted;
             return _contexto.SaveChanges() > 0;
         }
@@ -56,5 +58,12 @@ public class PrestamosBLL
             _contexto.SaveChanges();
         }
     }
-
+    void EliminarBalance(Prestamos prestamoss)
+    {
+        var persona =  _contexto.Personas.Find(prestamoss.PersonaId);
+        if(persona!=null){
+            persona.Balance -= prestamoss.Monto;
+            _contexto.Entry(persona).State = EntityState.Modified;
+        }
+    }
 }
