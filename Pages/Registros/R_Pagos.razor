@@ -99,20 +99,20 @@
                         </tr>
                     </thead>
                         <tbody>
-                                @foreach (var detalle in pago.PagosDetalle)
-                                {
-                                    <tr>
-                                        <td>@detalle.Id</td>
-                                        <td>@detalle.PrestamoId</td>
-                                        <td>@detalle.PagoId</td>
-                                        <td>@detalle.ValorPagado</td>
-                                        <td> <button name="Btn" id="Btn" class="btn btn-danger mr-2"
-                                        onclick=@(() => EliminarDetalle(detalle.Id))> 
-                                        <i class="oi oi-trash"></i>
-                                        </button>
-                                        </td>
-                                    </tr>
-                                }
+                            @foreach (var detalle in pago.PagosDetalle)
+                            {
+                                <tr>
+                                    <td>@detalle.Id</td>
+                                    <td>@detalle.PrestamoId</td>
+                                    <td>@detalle.PagoId</td>
+                                    <td>@detalle.ValorPagado</td>
+                                    <td> <button name="Btn" id="Btn" class="btn btn-danger mr-2"
+                                    onclick=@(() => EliminarDetalle(detalle.Id))> 
+                                    <i class="oi oi-trash"></i>
+                                    </button>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                         <tfoot>
                             <tr>
